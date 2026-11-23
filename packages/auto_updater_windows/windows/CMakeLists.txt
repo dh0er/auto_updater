@@ -18,8 +18,17 @@ set(PLUGIN_NAME "auto_updater_windows_plugin")
 
 # WinSparkle
 set(WIN_SPARKLE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/WinSparkle-0.8.1")
-set(WIN_SPARKLE_BINARIES "${WIN_SPARKLE_DIR}/x64/Release/WinSparkle.dll")
-set(WIN_SPARKLE_LIBRARIES "${WIN_SPARKLE_DIR}/x64/Release/WinSparkle.lib")
+# WinSparkle ships one prebuilt DLL per architecture. Flutter passes the
+# target as FLUTTER_TARGET_PLATFORM (windows-x64 / windows-arm64) and as the
+# Visual Studio generator platform (x64 / ARM64).
+if(FLUTTER_TARGET_PLATFORM STREQUAL "windows-arm64"
+    OR CMAKE_GENERATOR_PLATFORM MATCHES "^[Aa][Rr][Mm]64$")
+  set(WIN_SPARKLE_ARCH "ARM64")
+else()
+  set(WIN_SPARKLE_ARCH "x64")
+endif()
+set(WIN_SPARKLE_BINARIES "${WIN_SPARKLE_DIR}/${WIN_SPARKLE_ARCH}/Release/WinSparkle.dll")
+set(WIN_SPARKLE_LIBRARIES "${WIN_SPARKLE_DIR}/${WIN_SPARKLE_ARCH}/Release/WinSparkle.lib")
 
 # Any new source files that you add to the plugin should be added here.
 list(APPEND PLUGIN_SOURCES
